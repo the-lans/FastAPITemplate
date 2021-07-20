@@ -1,7 +1,7 @@
 from typing import Union, Iterable, Mapping, Any
 import peewee
 
-from backend.lib.decorators.cache import unified
+from backend.library.decorators.cache import unified
 
 
 class OptionsField(peewee.IntegerField):

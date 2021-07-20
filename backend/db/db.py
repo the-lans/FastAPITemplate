@@ -5,7 +5,7 @@ import peewee_asyncext
 from peewee import DateTimeField, TextField, Proxy, AutoField, Model
 
 from backend.config import DB_NAME, DB_USER
-from backend.lib.func import FieldHidden
+from backend.library.func import FieldHidden
 
 
 db = Proxy()

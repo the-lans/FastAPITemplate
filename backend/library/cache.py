@@ -1,7 +1,7 @@
 from collections import OrderedDict
 from datetime import timedelta, datetime
 
-from backend.lib.coro import start_coro, coro_func
+from backend.library.coro import start_coro, coro_func
 
 
 class TemporaryDict(OrderedDict):

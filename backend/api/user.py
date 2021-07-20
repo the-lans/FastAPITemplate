@@ -4,7 +4,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from backend.app import app
 from backend.models.user import Token, User, UserInDB
-from backend.lib.security import authenticate_user, create_access_token, get_current_active_user
+from backend.library.security import authenticate_user, create_access_token, get_current_active_user
 from backend.config import ACCESS_TOKEN_EXPIRE_MINUTES, users_db
 
 

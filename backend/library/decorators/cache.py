@@ -4,10 +4,10 @@ import threading
 from collections import defaultdict
 from functools import partial, update_wrapper
 
-from backend.lib.decorators.base import decorator_with_defaults
-from backend.lib.func import MultiFuncBase, args_to_dict
-from backend.lib.cache import TemporaryDict
-from backend.lib.coro import start_coro
+from backend.library.decorators.base import decorator_with_defaults
+from backend.library.func import MultiFuncBase, args_to_dict
+from backend.library.cache import TemporaryDict
+from backend.library.coro import start_coro
 
 
 def _args_to_dict(args, kwargs, func_args, key_args):

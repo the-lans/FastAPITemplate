@@ -2,7 +2,7 @@ import asyncio
 from datetime import timedelta
 from typing import Union
 
-from backend.lib.func import call_func
+from backend.library.func import call_func
 
 
 def get_loop():
