@@ -17,6 +17,8 @@
 
 - Перейдите в папку с проектом 
 
+- Создайте базу данных \<database\>
+
 - Выполните миграцию `python pw_migrate.py migrate --database=postgresql://postgres@<host_postgres>:5432/<database>`
 
   \<host_postgres\> - рабочий хост базы данных
