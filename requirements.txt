@@ -1,7 +1,10 @@
 passlib==1.7.4
 fastapi==0.66.0
 peewee==3.14.0
+peewee_async==0.7.0
+peewee-migrate==1.1.6
 uvicorn==0.14.0
 python-jose==3.3.0
 python-multipart==0.0.5
 starlette==0.14.2
+black==20.8b1
