@@ -1,8 +1,25 @@
-# to get a string like this run: openssl rand -hex 32
-SECRET_KEY = "e0d7fc931d76f1e2a7006e30d7a4c7273a4d95f2e56496f61bcb72be5ae7ec11"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 1440
-DOMAIN = "localhost"
+import yaml
+from os.path import abspath, join
+
+
+DEFAULT_WORK_DIR = abspath(join(abspath(__file__), '../..'))
+DATA_DIR = join(DEFAULT_WORK_DIR, 'data')
+
+conf_filename = 'conf.yaml'
+
+try:
+    settings = yaml.safe_load(open(join(DEFAULT_WORK_DIR, conf_filename)))
+except FileNotFoundError:
+    settings = {}
+
+SECRET_KEY = settings.get('SECRET_KEY', 'secret')
+ALGORITHM = settings.get('ALGORITHM', 'HS256')
+ACCESS_TOKEN_EXPIRE_MINUTES = settings.get('ACCESS_TOKEN_EXPIRE_MINUTES', 1440)
+
+DB_SETTINGS = settings.get('DB', {})
+DB_DOMAIN = DB_SETTINGS.get('DOMAIN', '127.0.0.1')
+DB_NAME = DB_SETTINGS.get('NAME', None)
+DB_USER = DB_SETTINGS.get('USER', 'postgres')
 
 users_db = {
     "test": {

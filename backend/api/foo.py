@@ -2,10 +2,11 @@ from typing import Optional
 from fastapi_utils.cbv import cbv
 from fastapi_utils.inferring_router import InferringRouter
 from fastapi import Depends
+
 from backend.app import app
 from backend.models.item import Item
 from backend.models.user import User
-from backend.security import get_current_active_user
+from backend.lib.security import get_current_active_user
 
 router = InferringRouter()
 
