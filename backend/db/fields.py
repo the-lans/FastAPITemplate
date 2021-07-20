@@ -17,9 +17,7 @@ class OptionsField(peewee.IntegerField):
                 options = {i + first_i: item for i, item in enumerate(options)}
             else:
                 for i in options.keys():
-                    assert isinstance(
-                        i, int
-                    ), f'All keys for {self.__class__.__name__} should be int'
+                    assert isinstance(i, int), f'All keys for {self.__class__.__name__} should be int'
 
         self._options = options
 

@@ -22,7 +22,8 @@ Some examples (model - class or model name)::
 """
 
 from peewee import SQL, Model, AutoField, DateTimeField, TextField, BooleanField
-#from backend.db.fields import OptionsField
+
+# from backend.db.fields import OptionsField
 
 try:
     import playhouse.postgres_ext as pw_pext

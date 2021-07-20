@@ -12,9 +12,7 @@ from backend.library.coro import start_coro
 
 def _args_to_dict(args, kwargs, func_args, key_args):
     cur_args = args_to_dict(args, kwargs, func_args)
-    return {
-        arg_name: cur_args[arg_name] for arg_name in key_args if arg_name in cur_args
-    }
+    return {arg_name: cur_args[arg_name] for arg_name in key_args if arg_name in cur_args}
 
 
 def _args_to_key(args, kwargs, func_args, key_args) -> frozenset:
@@ -66,9 +64,7 @@ class unified:
 
         self.answers_attr_name = f'__answers_for_{self.func.__name__}'
 
-        self.args_to_key = partial(
-            _args_to_key, func_args=self.func_args, key_args=key_args
-        )
+        self.args_to_key = partial(_args_to_key, func_args=self.func_args, key_args=key_args)
 
         if notifier:
             notifier.add(self.delete_answers)

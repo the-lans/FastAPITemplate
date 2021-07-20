@@ -24,12 +24,10 @@ class OAuth2PasswordBearerCookie(OAuth2):
         header_authorization: str = request.headers.get("Authorization")
         cookie_authorization: str = request.cookies.get("Authorization")
 
-        header_scheme, header_param = get_authorization_scheme_param(
-            header_authorization
-        )
-        cookie_scheme, cookie_param = get_authorization_scheme_param(
-            cookie_authorization
-        )
+        header_scheme, header_param = get_authorization_scheme_param(header_authorization)
+        cookie_scheme, cookie_param = get_authorization_scheme_param(cookie_authorization)
+        scheme = ""
+        param = {}
 
         if header_scheme.lower() == "bearer":
             authorization = True
@@ -46,9 +44,7 @@ class OAuth2PasswordBearerCookie(OAuth2):
 
         if not authorization or scheme.lower() != "bearer":
             if self.auto_error:
-                raise HTTPException(
-                    status_code=HTTP_403_FORBIDDEN, detail="Not authenticated"
-                )
+                raise HTTPException(status_code=HTTP_403_FORBIDDEN, detail="Not authenticated")
             else:
                 return None
         return param
