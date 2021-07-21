@@ -2,7 +2,7 @@ from typing import Optional
 from pydantic import BaseModel
 from peewee import TextField, BooleanField
 
-from backend.db.db import BaseDBItem
+from backend.db.base import BaseDBItem
 
 
 class Token(BaseModel):

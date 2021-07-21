@@ -1,4 +1,4 @@
-"""Peewee migrations -- 001_INITIAL.py.
+"""Peewee migrations -- 001_USER.py.
 
 Some examples (model - class or model name)::
 
@@ -22,13 +22,6 @@ Some examples (model - class or model name)::
 """
 
 from peewee import SQL, Model, AutoField, DateTimeField, TextField, BooleanField
-
-# from backend.db.fields import OptionsField
-
-try:
-    import playhouse.postgres_ext as pw_pext
-except ImportError:
-    pass
 
 
 def migrate(migrator, database, fake=False, **kwargs):
