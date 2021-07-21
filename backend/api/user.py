@@ -8,7 +8,7 @@ from backend.library.security import authenticate_user, create_access_token, get
 from backend.config import ACCESS_TOKEN_EXPIRE_MINUTES, users_db
 
 
-@app.post("/user/login", response_model=Token, tags=["user"])
+@app.post("/login", response_model=Token, tags=["user"])
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     user = authenticate_user(users_db, form_data.username, form_data.password)
     if not user:
@@ -22,17 +22,17 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@app.post("/user/signup", tags=["user"])
+@app.post("/signup", tags=["user"])
 async def create_user(current_user: UserInDB = Depends()):
     users_db[current_user.username] = dict(current_user)  # replace with db call, making sure to hash the password first
     return {"success": True}
 
 
-@app.get("/users/me/", response_model=User, tags=["user"])
+@app.get("/api/user", response_model=User, tags=["user"])
 async def read_users_me(current_user: User = Depends(get_current_active_user)):
     return current_user
 
 
-@app.get("/users/me/items/", tags=["user"])
-async def read_own_items(current_user: User = Depends(get_current_active_user)):
-    return [{"item_id": "MainApp", "owner": current_user.username}]
+@app.get("/")
+async def get_root():
+    return {"success": True}

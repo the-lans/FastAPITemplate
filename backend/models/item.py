@@ -18,10 +18,11 @@ class Item(BaseDBItem):
 
     @property
     async def dict(self):
-        return {'id': self.id,
-                'created': self.created,
-                'name': self.name,
-                'price': self.price,
-                'is_offer': self.is_offer,
-                'status': self.status,
-                }
+        return {
+            'id': self.id,
+            'created': self.created,
+            'name': self.name,
+            'price': self.price,
+            'is_offer': self.is_offer,
+            'status': self.status,
+        }

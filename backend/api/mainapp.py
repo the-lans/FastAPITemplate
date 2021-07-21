@@ -14,30 +14,26 @@ router = InferringRouter()
 class MainApp:
     current_user: User = Depends(get_current_active_user)
 
-    @router.get("/", tags=["MainApp"])
-    async def get_root(self):
-        return {"Hello": "World"}
-
-    @router.get("/items/list/?", tags=["MainApp"])
+    @router.get("/api/items/list/?", tags=["MainApp"])
     async def get_list(self):
         objs = []
         for obj in Item.select():
             objs.append(await obj.dict)
         return {'items': objs}
 
-    @router.get("/items/{item_id}", tags=["MainApp"])
+    @router.get("/api/items/{item_id}", tags=["MainApp"])
     async def get_item(self, item_id: int):
         obj = Item.get(Item.id == item_id)
         res = await obj.dict
         return res
 
-    @router.post("/items/new", tags=["MainApp"])
+    @router.post("/api/items/new", tags=["MainApp"])
     async def new_item(self, item: Item):
         obj = Item.create(**await item.dict)
         res = await obj.dict
         return res
 
-    @router.put("/items/{item_id}", tags=["MainApp"])
+    @router.put("/api/items/{item_id}", tags=["MainApp"])
     async def update_item(self, item_id: int, item: Item):
         obj = Item.get(Item.id == item_id)
         res = await obj.dict
