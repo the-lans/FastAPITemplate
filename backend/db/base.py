@@ -11,7 +11,7 @@ from backend.library.func import FieldHidden
 db = Proxy()
 db.initialize(
     peewee_asyncext.PooledPostgresqlExtDatabase(
-        DB_NAME, user=DB_USER, register_hstore=True, max_connections=8, stale_timeout=300, autorollback=True
+        DB_NAME, user=DB_USER, register_hstore=True, max_connections=8, stale_timeout=300, autorollback=True, connection_timeout=60,
     )
 )
 manager: peewee_async.Manager = Proxy()

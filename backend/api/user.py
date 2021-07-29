@@ -29,7 +29,7 @@ async def create_user(current_user: UserInDB = Depends()):
 
 
 @app.get("/api/user", response_model=User, tags=["user"])
-async def read_users_me(current_user: User = Depends(get_current_active_user)):
+async def read_current_user(current_user: User = Depends(get_current_active_user)):
     return current_user
 
 

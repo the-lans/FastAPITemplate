@@ -28,13 +28,13 @@ class MainApp:
         return res
 
     @router.post("/api/items/new", tags=["MainApp"])
-    async def new_item(self, item: Item):
+    async def new_item(self, item: Item = Depends()):
         obj = Item.create(**await item.dict)
         res = await obj.dict
         return res
 
     @router.put("/api/items/{item_id}", tags=["MainApp"])
-    async def update_item(self, item_id: int, item: Item):
+    async def update_item(self, item_id: int, item: Item = Depends()):
         obj = Item.get(Item.id == item_id)
         res = await obj.dict
         res.update(await item.dict)
