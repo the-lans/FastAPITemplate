@@ -36,12 +36,7 @@ class MainApp:
     @router.put("/api/items/{item_id}", tags=["MainApp"])
     async def update_item(self, item_id: int, item: Item = Depends()):
         obj = Item.get(Item.id == item_id)
-        res = await obj.dict
-        res.update(await item.dict)
-        for key, val in res.items():
-            setattr(obj, key, val)
-        obj.save()
-        return res
+        return item.update_or_create(obj)
 
 
 app.include_router(router)

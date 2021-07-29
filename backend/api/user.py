@@ -5,12 +5,12 @@ from fastapi.security import OAuth2PasswordRequestForm
 from backend.app import app
 from backend.models.user import Token, User, UserInDB
 from backend.library.security import authenticate_user, create_access_token, get_current_active_user
-from backend.config import ACCESS_TOKEN_EXPIRE_MINUTES, users_db
+from backend.config import ACCESS_TOKEN_EXPIRE_MINUTES
 
 
 @app.post("/login", response_model=Token, tags=["user"])
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = authenticate_user(users_db, form_data.username, form_data.password)
+    user = authenticate_user(form_data.username, form_data.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -24,8 +24,8 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
 
 @app.post("/signup", tags=["user"])
 async def create_user(current_user: UserInDB = Depends()):
-    users_db[current_user.username] = dict(current_user)  # replace with db call, making sure to hash the password first
-    return {"success": True}
+    obj = UserInDB.get(UserInDB.username == current_user.username)
+    return current_user.update_or_create(obj)
 
 
 @app.get("/api/user", response_model=User, tags=["user"])

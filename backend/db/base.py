@@ -11,7 +11,13 @@ from backend.library.func import FieldHidden
 db = Proxy()
 db.initialize(
     peewee_asyncext.PooledPostgresqlExtDatabase(
-        DB_NAME, user=DB_USER, register_hstore=True, max_connections=8, stale_timeout=300, autorollback=True, connection_timeout=60,
+        DB_NAME,
+        user=DB_USER,
+        register_hstore=True,
+        max_connections=8,
+        stale_timeout=300,
+        autorollback=True,
+        connection_timeout=60,
     )
 )
 manager: peewee_async.Manager = Proxy()
@@ -28,6 +34,14 @@ class BaseDBModel(Model):
             return f'{cls.__name__.lower()}'
         else:
             return f'{cls.__name__.lower()}_{postfix}'
+
+    def update_or_create(self, obj, item):
+        res = await obj.dict
+        res.update(await self.dict)
+        for key, val in res.items():
+            setattr(obj, key, val)
+        obj.save()
+        return res
 
     class Meta:
         database = db

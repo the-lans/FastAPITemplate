@@ -24,12 +24,13 @@ class User(BaseModel):
 
     @property
     async def dict(self):
-        return {'created': self.created,
-                'username': self.username,
-                'email': self.email,
-                'full_name': self.full_name,
-                'disabled': self.disabled,
-                }
+        return {
+            'created': self.created,
+            'username': self.username,
+            'email': self.email,
+            'full_name': self.full_name,
+            'disabled': self.disabled,
+        }
 
 
 class UserInDB(BaseDBItem):
