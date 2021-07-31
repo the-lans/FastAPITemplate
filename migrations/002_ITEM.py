@@ -7,7 +7,7 @@ from backend.db.fields import OptionsField
 
 def migrate(migrator, database, fake=False, **kwargs):
     @migrator.create_model
-    class Item(Model):
+    class ItemInDB(Model):
         id = AutoField()
         created = DateTimeField(constraints=[SQL('DEFAULT now()')])
         name = TextField(null=False)

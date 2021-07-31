@@ -1,9 +1,9 @@
 from typing import Optional
 from pydantic import BaseModel
-from datetime import datetime
 from peewee import TextField, BooleanField
 
 from backend.db.base import BaseDBItem
+from backend.models.base import BaseItem
 
 
 class Token(BaseModel):
@@ -15,9 +15,9 @@ class TokenData(BaseModel):
     username: Optional[str] = None
 
 
-class User(BaseModel):
-    created: datetime
+class User(BaseItem):
     username: str
+    hashed_password: str
     email: Optional[str] = None
     full_name: Optional[str] = None
     disabled: Optional[bool] = None
@@ -25,8 +25,8 @@ class User(BaseModel):
     @property
     async def dict(self):
         return {
-            'created': self.created,
             'username': self.username,
+            'hashed_password': self.hashed_password,
             'email': self.email,
             'full_name': self.full_name,
             'disabled': self.disabled,
@@ -35,10 +35,25 @@ class User(BaseModel):
 
 class UserInDB(BaseDBItem):
     username = TextField(null=False)  # str
+    hashed_password = TextField(null=False)  # str
     email = TextField(null=True)  # Optional[str] = None
     full_name = TextField(null=True)  # Optional[str] = None
     disabled = BooleanField(default=False)  # Optional[bool] = None
-    hashed_password = TextField(null=False)  # str
+
+    @property
+    async def dict(self):
+        return {
+            'id': self.id,
+            'created': self.created,
+            'username': self.username,
+            'email': self.email,
+            'full_name': self.full_name,
+            'disabled': self.disabled,
+            'hashed_password': self.hashed_password,
+        }
+
+    class Meta:
+        table_name = 'users'
 
 
 class UserSchema(BaseModel):
