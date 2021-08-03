@@ -11,30 +11,33 @@ router = InferringRouter()
 
 @cbv(router)
 class MainApp(BaseAppAuth):
+    @classmethod
+    async def get_object_id(cls, item_id):
+        return await cls.get_one_object(ItemInDB.select().where(ItemInDB.id == item_id))
+
     @router.get("/api/items/list", tags=["MainApp"])
     async def get_items(self):
         return await self.get_list(ItemInDB)
 
     @router.get("/api/items/{item_id}", tags=["MainApp"])
     async def get_item(self, item_id: int):
-        obj = await self.get_one_object(ItemInDB.select().where(ItemInDB.id == item_id))
-        res = {"success": False} if obj is None else {"success": True}
-        if obj is not None:
-            res.update(await obj.dict)
+        item_db = await self.get_object_id(item_id)
+        res = await self.prepare(item_db)
+        if item_db is not None:
+            res.update(await item_db.dict)
         return res
 
     @router.post("/api/items/new", tags=["MainApp"])
     async def new_item(self, item: Item = Depends()):
-        item_dict = ItemInDB.get_cls_dict(await item.dict)
-        obj = ItemInDB(**item_dict)
-        await obj.check()
-        obj.save()
-        return await obj.dict
+        return await ItemInDB.update_or_create(item, ret={"success": True})
 
     @router.put("/api/items/{item_id}", tags=["MainApp"])
     async def update_item(self, item_id: int, item: Item = Depends()):
-        obj = await self.get_one_object(Item.select().where(Item.id == item_id))
-        return await item.update_or_create(obj)
+        item_db = await self.get_object_id(item_id)
+        res = await self.prepare(item_db)
+        if item_db is not None:
+            return await ItemInDB.update_or_create(item, item_db, ret=res)
+        return res
 
 
 app.include_router(router)

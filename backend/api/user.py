@@ -33,7 +33,6 @@ async def create_user(current_user: User = Depends()):
 @app.get("/api/user", tags=["user"])
 async def read_current_user(current_user: User = Depends(get_current_active_user)):
     user_dict = await current_user.dict
-    # res = User.get_cls_dict(user_dict)
     return user_dict
 
 

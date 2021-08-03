@@ -27,6 +27,7 @@ manager.initialize(peewee_async.Manager(db))
 class BaseDBModel(Model):
     id = AutoField(help_text='Unique id of an object', _hidden=FieldHidden.WRITE)
     swagger_ignore = True
+    not_editable = ['id']
 
     @classmethod
     def get_name(cls, postfix: Optional[str] = None):
@@ -40,18 +41,20 @@ class BaseDBModel(Model):
         return {key: kwargs[key] for key in cls._meta.columns.keys() if key in kwargs}
 
     @classmethod
-    async def update_or_create(cls, obj, obj_db=None):
-        obj_dict = obj if isinstance(obj, dict) else await obj.dict
+    async def update_or_create(cls, obj, obj_db=None, ret=None):
+        if ret is None:
+            ret = {}
+        obj_dict = cls.get_cls_dict(obj if isinstance(obj, dict) else await obj.dict)
         if obj_db is None:
-            obj_db = cls.create(**obj_dict)
-            res = await obj_db.dict
+            obj_db = cls(**obj_dict)
         else:
-            res = await obj_db.dict
-            res.update(obj_dict)
-            for key, val in res.items():
-                setattr(obj_db, key, val)
-            obj_db.save()
-        return res
+            for key, val in obj_dict.items():
+                if key not in obj_db.not_editable:
+                    setattr(obj_db, key, val)
+        await obj_db.check()
+        obj_db.save()
+        ret.update(await obj_db.dict)
+        return ret
 
     @classmethod
     def get_class(cls, name, parent, attr=None):
@@ -84,6 +87,7 @@ class BaseDBModel(Model):
 class BaseDBItem(BaseDBModel):
     created = DateTimeField(default=datetime.now, _hidden=FieldHidden.WRITE)
     swagger_ignore = True
+    not_editable = ['id', 'created']
 
     async def check(self):
         if not self.created:

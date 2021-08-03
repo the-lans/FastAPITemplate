@@ -6,6 +6,10 @@ from backend.db.base import manager
 
 
 class BaseApp:
+    @classmethod
+    async def prepare(cls, obj_db):
+        return {"success": False} if obj_db is None else {"success": True}
+
     @staticmethod
     async def get_one_object(query):
         query_res = await manager.execute(query)
