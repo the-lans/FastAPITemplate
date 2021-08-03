@@ -2,7 +2,18 @@ from datetime import datetime
 from typing import Optional
 import peewee_async
 import peewee_asyncext
-from peewee import TextField, BooleanField, IntegerField, FloatField, DoubleField, DateField, DateTimeField, AutoField, Proxy, Model
+from peewee import (
+    TextField,
+    BooleanField,
+    IntegerField,
+    FloatField,
+    DoubleField,
+    DateField,
+    DateTimeField,
+    AutoField,
+    Proxy,
+    Model,
+)
 
 from backend.config import DB_NAME, DB_USER
 from backend.library.func import FieldHidden
