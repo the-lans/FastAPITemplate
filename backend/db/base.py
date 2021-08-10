@@ -3,6 +3,7 @@ from typing import Optional
 import peewee_async
 import peewee_asyncext
 from peewee import (
+    ForeignKeyField,
     TextField,
     BooleanField,
     IntegerField,
@@ -40,6 +41,9 @@ class BaseDBModel(Model):
     swagger_ignore = True
     not_editable = ['id']
 
+    async def check(self):
+        pass
+
     @classmethod
     def get_name(cls, postfix: Optional[str] = None):
         if postfix is None:
@@ -68,8 +72,9 @@ class BaseDBModel(Model):
         return ret
 
     @classmethod
-    def get_class(cls, name, parent, attr=None):
+    def get_class(cls, name, parent, not_editable=None):
         conf = {
+            ForeignKeyField: int,
             TextField: str,
             IntegerField: int,
             FloatField: float,
@@ -82,7 +87,10 @@ class BaseDBModel(Model):
         # class_val = {str: '', int: 0, float: 0.0, bool: False, datetime: datetime.strptime('1970-01-01', '%Y-%m-%d')}
         class_val = {str: '', int: 0, float: 0.0, bool: False, datetime: ''}
         res_type = {key.strip('_'): conf[type(val)] for key, val in cls._meta.columns.items() if type(val) in conf}
-        res = {key: class_val[val] for key, val in res_type.items()}
+        if not_editable:
+            res = {key: class_val[val] for key, val in res_type.items() if key not in not_editable}
+        else:
+            res = {key: class_val[val] for key, val in res_type.items()}
 
         @property
         async def get_dict(self):
@@ -101,5 +109,6 @@ class BaseDBItem(BaseDBModel):
     not_editable = ['id', 'created']
 
     async def check(self):
+        await super().check()
         if not self.created:
             self.created = datetime.now()
