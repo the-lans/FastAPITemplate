@@ -56,7 +56,7 @@ class BaseDBModel(Model):
         return {key: kwargs[key] for key in cls._meta.columns.keys() if key in kwargs}
 
     @classmethod
-    async def update_or_create(cls, obj, obj_db=None, ret=None):
+    async def update_or_create(cls, obj, obj_db=None, ret=None, return_obj_db=False):
         if ret is None:
             ret = {}
         obj_dict = cls.get_cls_dict(obj if isinstance(obj, dict) else await obj.dict)
@@ -69,7 +69,10 @@ class BaseDBModel(Model):
         await obj_db.check()
         obj_db.save()
         ret.update(await obj_db.dict)
-        return ret
+        if return_obj_db:
+            return ret, obj_db
+        else:
+            return ret
 
     @classmethod
     def get_class(cls, name, parent, not_editable=None):
