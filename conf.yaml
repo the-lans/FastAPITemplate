@@ -5,5 +5,6 @@ ACCESS_TOKEN_EXPIRE_MINUTES: 1440
 
 DB:
   DOMAIN: "127.0.0.1"
+  PORT: 8000
   NAME: "fapi_template"
   USER: "postgres"

@@ -1,10 +1,12 @@
 from fastapi_utils.cbv import cbv
 from fastapi_utils.inferring_router import InferringRouter
-from fastapi import Depends
+from fastapi import Depends, Response
 
 from backend.app import app
 from backend.models.item import Item, ItemInDB
 from backend.api.base import BaseAppAuth
+from backend.api.user import set_response_headers
+
 
 router = InferringRouter()
 
@@ -41,3 +43,23 @@ class MainApp(BaseAppAuth):
 
 
 app.include_router(router)
+
+
+@app.options("/api/template/list", tags=["MainApp"])
+async def options_object_id(response: Response):
+    return await set_response_headers(response)
+
+
+@app.options("/api/items/{item_id}", tags=["MainApp"])
+async def options_item(response: Response):
+    return await set_response_headers(response)
+
+
+@app.options("/api/items/new", tags=["MainApp"])
+async def options_new_item(response: Response):
+    return await set_response_headers(response)
+
+
+@app.options("/api/items/{item_id}", tags=["MainApp"])
+async def options_update_item(response: Response):
+    return await set_response_headers(response)

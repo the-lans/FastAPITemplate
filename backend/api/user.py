@@ -1,5 +1,5 @@
 from datetime import timedelta
-from fastapi import Depends, status, HTTPException
+from fastapi import Depends, status, HTTPException, Response
 from fastapi.security import OAuth2PasswordRequestForm
 
 from backend.app import app
@@ -8,6 +8,15 @@ from backend.library.security import authenticate_user, create_access_token, get
 from backend.config import ACCESS_TOKEN_EXPIRE_MINUTES
 from backend.api.base import BaseApp
 from backend.library.security import get_password_hash
+
+
+async def set_response_headers(response: Response):
+    # response.headers["Access-Control-Allow-Origin"] = f"http://{DB_SETTINGS['DOMAIN']}:{DB_SETTINGS['PORT']}"
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Credentials"] = "true"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT"
+    return {"success": True}
 
 
 @app.post("/login", response_model=Token, tags=["user"])
@@ -42,8 +51,13 @@ async def get_hash(password: str):
 
 
 @app.get("/")
-async def get_root():
-    return {"success": True}
+async def get_root(response: Response):
+    return await set_response_headers(response)
+
+
+@app.options("/")
+async def options_root(response: Response):
+    return await set_response_headers(response)
 
 
 if __name__ == "__main__":
