@@ -32,6 +32,7 @@ def migrate(migrator, database, fake=False, **kwargs):
         username = TextField(null=False)
         email = TextField(null=True)
         full_name = TextField(null=True)
+        role = TextField(null=True, default='restricted_user')
         disabled = BooleanField(default=False)
         hashed_password = TextField(null=False)
 

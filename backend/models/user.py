@@ -20,6 +20,7 @@ class User(BaseItem):
     hashed_password: str
     email: Optional[str] = None
     full_name: Optional[str] = None
+    role: Optional[str] = 'restricted_user'
     disabled: Optional[bool] = None
 
     @property
@@ -29,6 +30,7 @@ class User(BaseItem):
             'hashed_password': self.hashed_password,
             'email': self.email,
             'full_name': self.full_name,
+            'role': self.role,
             'disabled': self.disabled,
         }
 
@@ -38,6 +40,7 @@ class UserInDB(BaseDBItem):
     hashed_password = TextField(null=False)  # str
     email = TextField(null=True)  # Optional[str] = None
     full_name = TextField(null=True)  # Optional[str] = None
+    role = TextField(null=True, default='restricted_user')
     disabled = BooleanField(default=False)  # Optional[bool] = None
 
     @property
@@ -48,6 +51,7 @@ class UserInDB(BaseDBItem):
             'username': self.username,
             'email': self.email,
             'full_name': self.full_name,
+            'role': self.role,
             'disabled': self.disabled,
             'hashed_password': self.hashed_password,
         }

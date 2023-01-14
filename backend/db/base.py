@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional
-import peewee_async
+from peewee_async import Manager
 import peewee_asyncext
 from peewee import (
     ForeignKeyField,
@@ -16,10 +16,9 @@ from peewee import (
     Model,
 )
 
-from backend.config import DB_NAME, DB_USER
+from backend.config import DB_NAME, DB_ASYNC
 from backend.library.func import FieldHidden
 from backend.db.fields import OptionsField
-
 
 db = Proxy()
 db.initialize(
@@ -32,8 +31,8 @@ db.initialize(
         connection_timeout=60,
     )
 )
-manager: peewee_async.Manager = Proxy()
-manager.initialize(peewee_async.Manager(db))
+manager = Proxy()
+manager.initialize(Manager(db))
 
 
 class BaseDBModel(Model):
@@ -64,7 +63,7 @@ class BaseDBModel(Model):
             obj_db = cls(**obj_dict)
         else:
             for key, val in obj_dict.items():
-                if key not in obj_db.not_editable:
+                if key not in obj_db.not_editable and (val or isinstance(val, bool)):
                     setattr(obj_db, key, val)
         await obj_db.check()
         obj_db.save()
@@ -115,3 +114,47 @@ class BaseDBItem(BaseDBModel):
         await super().check()
         if not self.created:
             self.created = datetime.now()
+
+
+async def execute(query, *args, **kwargs):
+    return await manager.execute(query, *args, **kwargs) if DB_ASYNC else query.execute(*args, **kwargs)
+
+
+async def get_or_create(query, *args, **kwargs):
+    return await manager.get_or_create(query, *args, **kwargs) if DB_ASYNC else query.get_or_create(*args, **kwargs)
+
+
+async def create(query, *args, **kwargs):
+    return await manager.create(query, *args, **kwargs) if DB_ASYNC else query.create(*args, **kwargs)
+
+
+class BaseDBCache:
+    data_dict: dict = {}
+    data_obj: dict = {}
+    _model = BaseDBItem
+
+    @classmethod
+    async def update(cls) -> dict:
+        cls.data_dict = {}
+        cls.data_obj = {}
+        for obj in await execute(cls._model.select()):
+            cls.data_dict[obj.id] = await obj.dict
+            cls.data_obj[obj.id] = obj
+        return cls.data_dict
+
+    @classmethod
+    def filter(cls, **kwargs) -> dict:
+        result = {}
+        for key, item in cls.data_obj.items():
+            check = True
+            for fkey, fval in kwargs.items():
+                if getattr(item, fkey) != fval:
+                    check = False
+                    break
+            if check:
+                result[key] = item
+        return result
+
+    @classmethod
+    def filter_dict(cls, **kwargs) -> dict:
+        return {obj_header.key: obj_header.value for obj_header in cls.filter(**kwargs).values()}
