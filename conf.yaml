@@ -8,3 +8,4 @@ DB:
   PORT: 8000
   NAME: "fapi_template"
   USER: "postgres"
+  ASYNC: False

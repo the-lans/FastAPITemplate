@@ -16,7 +16,7 @@ from peewee import (
     Model,
 )
 
-from backend.config import DB_NAME, DB_ASYNC
+from backend.config import DB_NAME, DB_USER, DB_ASYNC
 from backend.library.func import FieldHidden
 from backend.db.fields import OptionsField
 
