@@ -20,6 +20,7 @@ from backend.config import DB_NAME, DB_USER, DB_ASYNC
 from backend.library.func import FieldHidden
 from backend.db.fields import OptionsField
 
+
 db = Proxy()
 db.initialize(
     peewee_asyncext.PooledPostgresqlExtDatabase(
@@ -31,7 +32,7 @@ db.initialize(
         connection_timeout=60,
     )
 )
-manager = Proxy()
+manager: Manager = Proxy()
 manager.initialize(Manager(db))
 
 
