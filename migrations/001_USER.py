@@ -39,6 +39,10 @@ def migrate(migrator, database, fake=False, **kwargs):
         class Meta:
             table_name = 'users'
 
+    migrator.sql(
+        "INSERT INTO users(username, full_name, role, disabled, hashed_password) VALUES ('admin', 'admin', 'admin', False, '$2b$12$dnFQuYI6QL/xiR5p1/hKOu30jsAtMqVmxi8gNJTKL6wYmcZK74ELG')"
+    )
+
 
 def rollback(migrator, database, fake=False, **kwargs):
     migrator.remove_model('users')
