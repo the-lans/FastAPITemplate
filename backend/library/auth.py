@@ -1,7 +1,6 @@
 from typing import Optional
 import functools
 import asyncio
-from os.path import join, exists, getmtime
 from datetime import timedelta, datetime
 import jwt
 from starlette.requests import Request
@@ -11,14 +10,10 @@ from fastapi.openapi.models import OAuthFlows as OAuthFlowsModel
 from fastapi.security import OAuth2
 from fastapi.security.utils import get_authorization_scheme_param
 
-from backend.library.decorators.other import executored
-from backend.library.redis import get_aclient
 from backend.db.base import get_or_create
 
 
 AUTH_TOKEN_NAME = 'Token'
-EXCLUDED_TOKEN_FILENAME = 'excluded_tokens'
-EXCLUDED_TOKENS = set()
 
 
 class OAuth2PasswordBearerCookie(OAuth2):
@@ -120,31 +115,6 @@ class TokenAuthenticator(Authenticator):
             AUTH_TOKEN_NAME in handler.headers or AUTH_TOKEN_NAME in handler.cookies or 'token' in handler.path_params
         )
 
-    async def check_excluded(self, token: str) -> bool:
-        global EXCLUDED_TOKENS
-        if not self.DATA_DIR:
-            return False
-
-        path = join(self.DATA_DIR, EXCLUDED_TOKEN_FILENAME)
-        if not exists(path):
-            return False
-
-        client = await get_aclient()
-        key_name = f':{EXCLUDED_TOKEN_FILENAME}_mtime'
-        file_mtime = getmtime(path)
-        last_mtime = await client.get(key_name)
-
-        @executored
-        def get_tokens() -> set:
-            with open(path, 'r') as f:
-                return set(f.read().split())
-
-        if not EXCLUDED_TOKENS or float(last_mtime) != file_mtime:
-            EXCLUDED_TOKENS = await get_tokens()
-            await client.set(key_name, file_mtime)
-
-        return token in EXCLUDED_TOKENS
-
     async def verify(self, handler: Request, args, kwargs):
         auth_cookie = handler.cookies.get(AUTH_TOKEN_NAME)
         token = (
@@ -152,9 +122,6 @@ class TokenAuthenticator(Authenticator):
             or (auth_cookie if auth_cookie else None)
             or (handler.path_params.get('token') if 'token' in handler.path_params else None)
         )
-
-        if await self.check_excluded(token):
-            return 'JWT Token excluded'
 
         try:
             data = self.verify_token(token)

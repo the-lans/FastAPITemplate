@@ -1,5 +1,6 @@
 from enum import auto, IntFlag
-from typing import Mapping, Callable
+from typing import Mapping, Callable, Any, List, Dict
+import hashlib
 
 
 class FieldHidden(IntFlag):
@@ -73,5 +74,23 @@ def dict_to_str(data: dict, sep: str = ', ', sformat: str = '{:}: {:}') -> str:
     return sep.join([sformat.format(str(key), str(val)) for key, val in data.items()])
 
 
+def obj_to_dict(obj: Any, fields: List) -> Dict:
+    return {key: getattr(obj, key) for key in fields}
+
+
+def dict_keys_lower(data: Dict[str, Any]) -> Dict[str, Any]:
+    return {key.lower(): val for key, val in data.items()}
+
+
+def dict_keys_exclude(data: Dict, keys: Any) -> Dict:
+    return {key: val for key, val in data.items() if key not in keys}
+
+
 def new_file(file_path: str):
     open(file_path, 'w').close()
+
+
+def hash_md5_sum(data: bytes) -> int:
+    hexval = hashlib.md5(data).hexdigest()
+    decval = [int(hexval[ind : ind + 16], 16) for ind in range(0, len(hexval), 16)]
+    return sum(decval)

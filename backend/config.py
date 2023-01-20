@@ -1,5 +1,6 @@
 import yaml
-from os.path import abspath, join
+from os.path import abspath, join, exists
+from os import makedirs
 
 
 DEFAULT_WORK_DIR = abspath(join(abspath(__file__), '../..'))
@@ -22,3 +23,7 @@ DB_SETTINGS['PORT'] = DB_SETTINGS.get('PORT', 8000)
 DB_NAME = DB_SETTINGS.get('NAME', None)
 DB_USER = DB_SETTINGS.get('USER', 'postgres')
 DB_ASYNC = DB_SETTINGS.get('ASYNC', False)
+
+for f in [DATA_DIR]:
+    if not exists(f):
+        makedirs(f, exist_ok=True)

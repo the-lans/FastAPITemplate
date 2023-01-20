@@ -18,7 +18,7 @@ class BaseApp:
     @staticmethod
     async def get_list(cls, name='items'):
         objs = []
-        for obj in await execute(cls.select()):
+        for obj in await execute(cls.select().order_by(cls.id)):
             objs.append(await obj.dict)
         return {name: objs}
 

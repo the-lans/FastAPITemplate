@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 from peewee_async import Manager
-import peewee_asyncext
+from peewee_asyncext import PooledPostgresqlExtDatabase
 from peewee import (
     ForeignKeyField,
     TextField,
@@ -23,7 +23,7 @@ from backend.db.fields import OptionsField
 
 db = Proxy()
 db.initialize(
-    peewee_asyncext.PooledPostgresqlExtDatabase(
+    PooledPostgresqlExtDatabase(
         DB_NAME,
         user=DB_USER,
         register_hstore=False,
